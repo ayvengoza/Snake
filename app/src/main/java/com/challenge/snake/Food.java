@@ -36,10 +36,11 @@ public class Food {
             Paint paint = new Paint();
             paint.setColor(Color.GREEN);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            canvas.drawCircle(mPosition.x * GameView.unitW,
-                    mPosition.y * GameView.unitH,
-                    (float) (Math.min(GameView.unitW, GameView.unitH))*GameView.space/2,
-                    paint);
+            float x = mPosition.x * GameView.unitW;
+            float y = mPosition.y * GameView.unitH;
+            float side = (float) (Math.min(GameView.unitW, GameView.unitH))*GameView.space/2;
+//            canvas.drawCircle(x, y, side, paint);
+            canvas.drawRect(x - side, y - side, x + side, y + side, paint);
         }
     }
 

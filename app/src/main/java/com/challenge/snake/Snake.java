@@ -61,10 +61,11 @@ public class Snake {
         int counter = 0;
         for(Point point : mSnakeBody){
             if(counter%GameView.space == 0) {
-                canvas.drawCircle(point.x * GameView.unitW,
-                        point.y * GameView.unitH,
-                        (float) (Math.min(GameView.unitW, GameView.unitH)*GameView.space/1.5),
-                        paint);
+                float side = (float) (Math.min(GameView.unitW, GameView.unitH)*GameView.space/1.5);
+                float x = point.x * GameView.unitW;
+                float y = point.y * GameView.unitH;
+//                canvas.drawCircle(x, y, side, paint);
+                canvas.drawRect(x - side, y - side, x + side, y + side, paint);
             }
             counter++;
         }
