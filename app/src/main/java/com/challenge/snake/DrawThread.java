@@ -1,87 +1,83 @@
 package com.challenge.snake;
 
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.Point;
 import android.view.SurfaceHolder;
 
 public class DrawThread extends Thread {
-    private boolean runFlag = false;
-    private boolean firstRun = true;
     private SurfaceHolder mSurfaceHolder;
-    private Bitmap picture;
-    private Matrix matrix;
-    private long prevTime;
-    private int x;
-    private int y;
-    private int step = 1;
+    private Snake mSnake;
+    private Food mFood;
+    private Canvas mCanvas;
     private Direction direction = Direction.Center;
+    private boolean isFirstTime = true;
 
     public DrawThread(SurfaceHolder surfaceHolder, Resources resources){
         mSurfaceHolder = surfaceHolder;
-        picture = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher);
-
-        matrix = new Matrix();
-        matrix.postScale(3.0f, 3.0f);
-        matrix.postTranslate(100.0f, 100.0f);
-
-        prevTime = System.currentTimeMillis();
-        x = mSurfaceHolder.getSurfaceFrame().width()/2;
-        y = mSurfaceHolder.getSurfaceFrame().height()/2;
-    }
-
-    public void setRunning(boolean run){
-        runFlag = run;
+        mSnake = new Snake();
+        mFood = new Food(mSnake);
     }
 
     @Override
     public void run() {
-        Canvas canvas;
-        canvas = null;
-        while(runFlag) {
+        while(GameState.getInstance().isRunning()) {
+            update();
+            draw();
+            checkCollision();
+            delay();
+        }
+    }
+
+    private void update(){
+        mSnake.update();
+        mFood.update();
+    }
+
+    private void draw(){
+        if(mSurfaceHolder.getSurface().isValid()) {
+            if(isFirstTime){
+                GameView.unitW = mSurfaceHolder.getSurfaceFrame().width()/GameView.maxX;
+                GameView.unitH = mSurfaceHolder.getSurfaceFrame().height()/GameView.maxY;
+                isFirstTime = false;
+            }
             try {
-                canvas = mSurfaceHolder.lockCanvas(null);
+                mCanvas = mSurfaceHolder.lockCanvas(null);
                 synchronized (mSurfaceHolder) {
-                    updatePosition();
-                    canvas.drawColor(Color.YELLOW);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.DKGRAY);
-                    paint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(x, y, 20, paint);
+                    mCanvas.drawColor(Color.WHITE);
+                    mSnake.draw(mCanvas);
+                    mFood.draw(mCanvas);
                 }
             } finally {
-                if (canvas != null) {
-                    mSurfaceHolder.unlockCanvasAndPost(canvas);
+                if (mCanvas != null) {
+                    mSurfaceHolder.unlockCanvasAndPost(mCanvas);
                 }
             }
         }
     }
 
-    public void setDirection(Direction direction){
-        this.direction = direction;
-    }
-
-    private void updatePosition(){
-        switch (direction){
-            case Right:
-                x+=step;
-                break;
-            case Left:
-                x -= step;
-                break;
-            case Up:
-                y -= step;
-                break;
-            case Down:
-                y += step;
-                break;
+    private void checkCollision(){
+        Point headSnake = mSnake.getHead();
+        Point food = mFood.getPosition();
+        if(headSnake.equals(food)){
+            GameState.getInstance().incraceScore();
+            GameState.getInstance().deleteFood();
+            mSnake.incraceBodyLength();
+        } else if (headSnake.x > GameView.maxX - 1
+                || headSnake.x < 1
+                || headSnake.y > GameView.maxY - 1
+                || headSnake.y < 1){
+            GameState.getInstance().setSnakeOutOfField();
         }
     }
 
-
+    private void delay(){
+        try {
+            sleep(350 );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

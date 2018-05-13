@@ -21,14 +21,13 @@ public class AccelInteractor {
     private final float shakeThreshold = 1.5f;
     private boolean shakedInitiated = false;
     private SensorManager mSensorManager;
-    private enum Direction{
-        Right, Left, Up, Down, Center
-    }
+
     SensorEventListener mSensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             updateAccelParameters(event.values[0], event.values[1], event.values[2]);
-            switch (getDirection()){
+            Direction direction = getDirection();
+            switch (direction){
                 case Right:
                     mDi.toRight();
                     break;
@@ -42,6 +41,11 @@ public class AccelInteractor {
                     mDi.toDown();
                     break;
             }
+
+            if(direction != Direction.Center){
+                GameState.getInstance().setDirection(direction);
+            }
+
 //            if ((!shakedInitiated) && isAccelerationChanged()){
 //                shakedInitiated = true;
 //            } else if ((shakedInitiated) && isAccelerationChanged()){
