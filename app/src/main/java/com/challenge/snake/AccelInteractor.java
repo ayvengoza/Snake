@@ -21,31 +21,20 @@ public class AccelInteractor {
     private final float shakeThreshold = 1.5f;
     private boolean shakedInitiated = false;
     private SensorManager mSensorManager;
+    private Direction lastDirection = Direction.Center;
 
     SensorEventListener mSensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             updateAccelParameters(event.values[0], event.values[1], event.values[2]);
             Direction direction = getDirection();
-            switch (direction){
-                case Right:
-                    mDi.toRight();
-                    break;
-                case Left:
-                    mDi.toLeft();
-                    break;
-                case Up:
-                    mDi.toUp();
-                    break;
-                case Down:
-                    mDi.toDown();
-                    break;
+            if(!lastDirection.equals(direction)){
+                mDi.updated(direction);
+                if(direction != Direction.Center){
+                    GameState.getInstance().setDirection(direction);
+                }
+                lastDirection = direction;
             }
-
-            if(direction != Direction.Center){
-                GameState.getInstance().setDirection(direction);
-            }
-
 //            if ((!shakedInitiated) && isAccelerationChanged()){
 //                shakedInitiated = true;
 //            } else if ((shakedInitiated) && isAccelerationChanged()){
@@ -99,7 +88,7 @@ public class AccelInteractor {
     }
 
     private Direction getDirection(){
-        Log.d(TAG, String.format("x:%f y:%f z:%f", xAccel, yAccel, zAccel));
+//        Log.d(TAG, String.format("x:%f y:%f z:%f", xAccel, yAccel, zAccel));
         if(xAccel < -3.5)
             return Direction.Right;
         else if(xAccel > 3.5)
@@ -109,7 +98,8 @@ public class AccelInteractor {
         else if(yAccel > 7)
             return Direction.Down;
         else
-            return Direction.Center;
+            return lastDirection;
+//            return Direction.Center;
     }
 
 

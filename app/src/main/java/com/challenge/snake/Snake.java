@@ -13,14 +13,15 @@ public class Snake {
     private int yHead;
     private int mBodyLength = 3;
     private int step = 10;
+    private int space = 2;
     private Point mHead;
     private Direction mDirection = Direction.Up;
 
     public Snake(){
         mSnakeBody = new LinkedList<>();
-        xHead = GameView.maxX/2;
+        xHead = GameView.maxX/2 + (GameView.maxX/2)%GameView.space;
         for(int i = 0; i<mBodyLength; i++){
-            yHead = GameView.maxY/2 - i;
+            yHead = (GameView.maxY/2 + (GameView.maxY/2)%GameView.space) - i;
             mHead = new Point(xHead, yHead);
             mSnakeBody.addFirst(mHead);
         }
@@ -76,9 +77,11 @@ public class Snake {
     }
 
     private void updateDirection(){
-        Direction newDirecction = getDirection();
-        if(isDirectionAllow(newDirecction) && newDirecction != Direction.Center){
-            mDirection = newDirecction;
+        if(xHead % GameView.space == 0 && yHead % GameView.space == 0) {
+            Direction newDirecction = getDirection();
+            if (isDirectionAllow(newDirecction) && newDirecction != Direction.Center) {
+                mDirection = newDirecction;
+            }
         }
     }
 

@@ -14,6 +14,7 @@ public class DrawThread extends Thread {
     private Canvas mCanvas;
     private Direction direction = Direction.Center;
     private boolean isFirstTime = true;
+    private long lastTime;
 
     public DrawThread(SurfaceHolder surfaceHolder, Resources resources){
         mSurfaceHolder = surfaceHolder;
@@ -23,6 +24,8 @@ public class DrawThread extends Thread {
 
     @Override
     public void run() {
+        GameState.getInstance().startRunning();
+        lastTime = System.currentTimeMillis();
         while(GameState.getInstance().isRunning()) {
             update();
             draw();
@@ -47,8 +50,14 @@ public class DrawThread extends Thread {
                 mCanvas = mSurfaceHolder.lockCanvas(null);
                 synchronized (mSurfaceHolder) {
                     mCanvas.drawColor(Color.WHITE);
-                    mSnake.draw(mCanvas);
-                    mFood.draw(mCanvas);
+                    if(mSnake.isOverlap(mFood.getPosition())){
+                        mFood.draw(mCanvas);
+                        mSnake.draw(mCanvas);
+                    } else {
+                        mSnake.draw(mCanvas);
+                        mFood.draw(mCanvas);
+                    }
+
                 }
             } finally {
                 if (mCanvas != null) {
@@ -74,10 +83,16 @@ public class DrawThread extends Thread {
     }
 
     private void delay(){
-        try {
-            sleep(350 );
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        long currentTime = System.currentTimeMillis();
+        long period = 350;
+        long drawTime = (currentTime - lastTime);
+        if(period > drawTime) {
+            try {
+                sleep(period - drawTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        lastTime = currentTime;
     }
 }

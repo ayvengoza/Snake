@@ -1,17 +1,16 @@
 package com.challenge.snake;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    public static int maxX = 30;
-    public static int maxY = 40;
+    public static int maxX = 40;
+    public static int maxY = 50;
     public static float unitW = 0;
     public static float unitH = 0;
+    public static final int space = 2;
     private SurfaceHolder mSurfaceHolder;
 
 
@@ -35,12 +34,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        stopThread();
+        stopGame();
     }
 
     public void startGame(){
         if(!GameState.getInstance().isRunning() && !thread.isAlive()) {
-            stopThread();
+            stopGame();
             GameState.getInstance().reset();
             thread = new DrawThread(mSurfaceHolder, getResources());
             try {
@@ -52,7 +51,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private void stopThread(){
+    public void stopGame(){
         boolean retry = true;
         GameState.getInstance().stopRunning();
         while(retry){

@@ -1,5 +1,7 @@
 package com.challenge.snake;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class GameState {
 
     private static GameState sGameState;
@@ -9,17 +11,9 @@ public class GameState {
     private boolean mSnakeOverlaped;
     private boolean mSnakeOutOfField;
     private boolean mFoodExist;
-    private Callback mCallback;
-
-    interface Callback{
-        void gameRunChange(boolean isRun);
-        void gameScoreChange(int score);
-    }
-
 
     private GameState(){
         reset();
-        mRunning = false;
     }
 
     public static GameState getInstance(){
@@ -31,8 +25,8 @@ public class GameState {
 
     public void reset(){
         mDirection = Direction.Center;
-        mScore = 0;
-        mRunning = true;
+        setScore(0);
+        mRunning = false;
         mSnakeOverlaped = false;
         mSnakeOutOfField = false;
         mFoodExist = false;
@@ -47,21 +41,28 @@ public class GameState {
     }
 
     public void incraceScore(){
-        mScore += 1;
+        setScore(mScore + 1);
     }
 
     public int getScore(){
         return mScore;
     }
 
+    private void setScore(int score){
+        mScore = score;
+        EventBus.getDefault().post(GameEvent.ScoreUpdate);
+    }
+
     public void setSnakeOverlaped() {
         mSnakeOverlaped = true;
-        mRunning = false;
+        gameOver();
+        stopRunning();
     }
 
     public void setSnakeOutOfField(){
         mSnakeOutOfField = true;
-        mRunning = false;
+        gameOver();
+        stopRunning();
     }
 
     public  boolean isFoodExist(){
@@ -82,8 +83,15 @@ public class GameState {
 
     public void stopRunning(){
         mRunning = false;
-        if(mCallback != null){
-            mCallback.gameRunChange(mRunning);
-        }
+        EventBus.getDefault().post(GameEvent.Stoped);
+    }
+
+    public void startRunning(){
+        mRunning = true;
+        EventBus.getDefault().post(GameEvent.Started);
+    }
+
+    private void gameOver(){
+        EventBus.getDefault().post(GameEvent.GameOver);
     }
 }
