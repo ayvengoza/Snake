@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Snake</string>
+    <string name="string_wlcome">Hi!</string>
+    <string name="string_control_info">For snake control use rotation</string>
+    <string name="string_move_to_start">Move Up to Start</string>
+    <string name="string_game_over">Game Over</string>
+    <string name="label_best_result">Best result</string>
+    <string name="label_current_result">Current result</string>
+    <string name="string_move_to_restart">Move Up to Restart</string>
+    <string name="string_new_record">NEW RECORD</string>
 </resources>

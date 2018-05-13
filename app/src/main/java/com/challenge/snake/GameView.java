@@ -6,11 +6,11 @@ import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    public static int maxX = 40;
-    public static int maxY = 50;
+    public static int maxX = 400;
+    public static int maxY = 500;
     public static float unitW = 0;
     public static float unitH = 0;
-    public static final int space = 2;
+    public static final int space = 20;
     private SurfaceHolder mSurfaceHolder;
 
 
@@ -24,7 +24,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         thread = new DrawThread(mSurfaceHolder, getResources());
-        startGame();
     }
 
     @Override
@@ -38,7 +37,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void startGame(){
-        if(!GameState.getInstance().isRunning() && !thread.isAlive()) {
+        if(thread != null && !GameState.getInstance().isRunning() && !thread.isAlive()) {
             stopGame();
             GameState.getInstance().reset();
             thread = new DrawThread(mSurfaceHolder, getResources());
@@ -63,5 +62,4 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-
 }

@@ -11,9 +11,7 @@ public class Snake {
     private LinkedList<Point> mSnakeBody;
     private int xHead;
     private int yHead;
-    private int mBodyLength = 3;
-    private int step = 10;
-    private int space = 2;
+    private int mBodyLength = 3 * GameView.space - (GameView.space - 1);
     private Point mHead;
     private Direction mDirection = Direction.Up;
 
@@ -60,16 +58,20 @@ public class Snake {
         Paint paint = new Paint();
         paint.setColor(Color.DKGRAY);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        int counter = 0;
         for(Point point : mSnakeBody){
-            canvas.drawCircle(point.x*GameView.unitW,
-                    point.y*GameView.unitH,
-                    Math.min(GameView.unitW, GameView.unitH),
-                    paint);
+            if(counter%GameView.space == 0) {
+                canvas.drawCircle(point.x * GameView.unitW,
+                        point.y * GameView.unitH,
+                        (float) (Math.min(GameView.unitW, GameView.unitH)*GameView.space/1.5),
+                        paint);
+            }
+            counter++;
         }
     }
 
     public void incraceBodyLength(){
-        mBodyLength += 1;
+        mBodyLength += GameView.space;
     }
 
     private Direction getDirection(){

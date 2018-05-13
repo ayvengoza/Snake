@@ -43,6 +43,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:textAlignment="center"
         android:textColor="@color/colorText"
         android:textSize="72sp"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -35,14 +35,6 @@ public class AccelInteractor {
                 }
                 lastDirection = direction;
             }
-//            if ((!shakedInitiated) && isAccelerationChanged()){
-//                shakedInitiated = true;
-//            } else if ((shakedInitiated) && isAccelerationChanged()){
-//                mDi.toUp();
-//            } else if ((shakedInitiated) && (!isAccelerationChanged())){
-//                shakedInitiated = false;
-//                mDi.toDown();
-//            }
         }
 
         @Override

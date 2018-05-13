@@ -12,7 +12,6 @@ public class DrawThread extends Thread {
     private Snake mSnake;
     private Food mFood;
     private Canvas mCanvas;
-    private Direction direction = Direction.Center;
     private boolean isFirstTime = true;
     private long lastTime;
 
@@ -42,22 +41,23 @@ public class DrawThread extends Thread {
     private void draw(){
         if(mSurfaceHolder.getSurface().isValid()) {
             if(isFirstTime){
-                GameView.unitW = mSurfaceHolder.getSurfaceFrame().width()/GameView.maxX;
-                GameView.unitH = mSurfaceHolder.getSurfaceFrame().height()/GameView.maxY;
+                GameView.unitW = ((float)mSurfaceHolder.getSurfaceFrame().width())/(float)GameView.maxX;
+                GameView.unitH = ((float)mSurfaceHolder.getSurfaceFrame().height())/(float)GameView.maxY;
                 isFirstTime = false;
             }
             try {
                 mCanvas = mSurfaceHolder.lockCanvas(null);
                 synchronized (mSurfaceHolder) {
-                    mCanvas.drawColor(Color.WHITE);
-                    if(mSnake.isOverlap(mFood.getPosition())){
-                        mFood.draw(mCanvas);
-                        mSnake.draw(mCanvas);
-                    } else {
-                        mSnake.draw(mCanvas);
-                        mFood.draw(mCanvas);
+                    if(mCanvas != null) {
+                        mCanvas.drawColor(Color.WHITE);
+                        if (mSnake.isOverlap(mFood.getPosition())) {
+                            mFood.draw(mCanvas);
+                            mSnake.draw(mCanvas);
+                        } else {
+                            mSnake.draw(mCanvas);
+                            mFood.draw(mCanvas);
+                        }
                     }
-
                 }
             } finally {
                 if (mCanvas != null) {
@@ -84,7 +84,7 @@ public class DrawThread extends Thread {
 
     private void delay(){
         long currentTime = System.currentTimeMillis();
-        long period = 350;
+        long period = 35;
         long drawTime = (currentTime - lastTime);
         if(period > drawTime) {
             try {
